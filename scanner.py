@@ -1,6 +1,11 @@
 import json
 from pathlib import Path
 import requests
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def call_openrouter(prompt: str, model: str, api_key: str) -> str:
     url = "https://openrouter.ai/api/v1/chat/completions"
@@ -26,8 +31,9 @@ def load_policies():
 
 def main():
     cfg = load_config()
-    # Replace API key directly here
-    cfg["openrouter_api_key"] = "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"
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    if not api_key:
+        raise ValueError("API key not found. Add OPENROUTER_API_KEY to a .env file.")
 
     policies = load_policies()
     prompt = (
@@ -38,7 +44,7 @@ def main():
         f"Organization: {cfg['organization']}\n\n"
         f"Policies:\n{policies}"
     )
-    response = call_openrouter(prompt, cfg["model"], cfg["openrouter_api_key"])
+    response = call_openrouter(prompt, cfg["model"], api_key)
     Path("report.json").write_text(response)
     print("AI analysis saved to report.json")
 
