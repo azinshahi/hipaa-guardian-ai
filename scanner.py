@@ -26,6 +26,9 @@ def load_policies():
 
 def main():
     cfg = load_config()
+    # Replace API key directly here
+    cfg["openrouter_api_key"] = "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"
+
     policies = load_policies()
     prompt = (
         "You are a HIPAA compliance analyzer. "
